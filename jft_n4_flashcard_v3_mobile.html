@@ -1,0 +1,222 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+.wrap{padding:.75rem 0}
+.row{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
+.mbtn{padding:6px 12px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);font-size:13px;cursor:pointer;background:var(--color-background-primary);color:var(--color-text-secondary)}
+.mbtn.on{background:var(--color-background-secondary);color:var(--color-text-primary);border-color:var(--color-border-primary)}
+.day-grid{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:10px}
+.db{padding:5px 8px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);font-size:12px;cursor:pointer;background:var(--color-background-primary);color:var(--color-text-secondary);min-width:36px;text-align:center}
+.db.cur{background:#534AB7;color:#fff;border-color:#534AB7}
+.db.done{background:var(--color-background-success);color:var(--color-text-success);border-color:var(--color-border-success)}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-bottom:10px}
+.st{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:8px 10px;font-size:11px;color:var(--color-text-secondary);text-align:center}
+.st b{display:block;font-size:20px;font-weight:500;color:var(--color-text-primary);margin-bottom:2px}
+.pbar{height:5px;background:var(--color-background-secondary);border-radius:3px;margin-bottom:12px;overflow:hidden}
+.pfill{height:100%;background:#534AB7;border-radius:3px;transition:width .3s}
+.card{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1.5rem 1rem;text-align:center;cursor:pointer;min-height:200px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;margin-bottom:10px;user-select:none;-webkit-tap-highlight-color:transparent}
+.card:active{background:var(--color-background-secondary)}
+.cjp{font-size:36px;font-weight:500;color:var(--color-text-primary);line-height:1.2}
+.crd{font-size:15px;color:var(--color-text-secondary);margin-top:2px}
+.crom{font-size:13px;color:var(--color-text-tertiary)}
+.chint{font-size:12px;color:var(--color-text-tertiary);margin-top:6px}
+.cmean{font-size:22px;font-weight:500;color:#534AB7;margin-top:6px}
+.ctype{font-size:11px;color:var(--color-text-tertiary);margin-top:2px}
+.nrow{display:flex;gap:8px;align-items:center;justify-content:center;margin-bottom:8px}
+.nrow button{padding:10px 20px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary);font-size:14px;cursor:pointer;min-width:80px}
+.nrow button:active{background:var(--color-background-secondary)}
+.cnt{font-size:13px;color:var(--color-text-secondary);min-width:55px;text-align:center}
+.arow{display:flex;gap:8px;justify-content:center;margin-top:4px}
+.bk{padding:12px 0;border:none;border-radius:var(--border-radius-md);background:#1D9E75;color:#fff;font-size:14px;cursor:pointer;flex:1;max-width:160px}
+.bk:active{background:#0F6E56}
+.bs{padding:12px 0;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-secondary);font-size:14px;cursor:pointer;flex:1;max-width:160px}
+.bs:active{background:var(--color-background-secondary)}
+.ltbl{width:100%;border-collapse:collapse;font-size:13px}
+.ltbl th{text-align:left;padding:6px 6px;border-bottom:0.5px solid var(--color-border-secondary);color:var(--color-text-secondary);font-weight:500;font-size:11px}
+.ltbl td{padding:7px 6px;border-bottom:0.5px solid var(--color-border-tertiary);vertical-align:top}
+.ltbl tr.kn td{color:var(--color-text-tertiary)}
+.badge{display:inline-block;padding:1px 6px;border-radius:99px;font-size:11px}
+.bn5{background:#E6F1FB;color:#0C447C}
+.bn4{background:#EEEDFE;color:#3C3489}
+.rom-tag{font-size:11px;color:var(--color-text-tertiary);display:block;margin-top:1px}
+.jp-cell{font-size:15px;color:var(--color-text-primary)}
+</style>
+
+<h2 class="sr-only">Flashcard 1000 kosakata JFT N4, dibagi 50 kata per hari selama 20 hari. Ketuk kartu untuk melihat arti.</h2>
+
+<div class="wrap">
+<div class="row">
+  <button class="mbtn on" id="mf" onclick="setM('f')">Flashcard</button>
+  <button class="mbtn" id="ml" onclick="setM('l')">Daftar</button>
+</div>
+<div class="day-grid" id="dg"></div>
+<div class="stats">
+  <div class="st"><b id="sT">50</b>Total</div>
+  <div class="st"><b id="sK">0</b>Hafal</div>
+  <div class="st"><b id="sL">50</b>Sisa</div>
+</div>
+<div class="pbar"><div class="pfill" id="pf" style="width:0%"></div></div>
+
+<div id="fMode">
+  <div class="card" id="cd" onclick="flip()">
+    <div class="cjp" id="cJ"></div>
+    <div class="crd" id="cR"></div>
+    <div class="crom" id="cRom"></div>
+    <div class="chint" id="cH">ketuk untuk lihat arti</div>
+    <div class="cmean" id="cM" style="display:none"></div>
+    <div class="ctype" id="cTp"></div>
+  </div>
+  <div class="nrow">
+    <button onclick="prev()"><i class="ti ti-arrow-left" aria-hidden="true"></i> Prev</button>
+    <span class="cnt" id="ct">1 / 50</span>
+    <button onclick="next()">Next <i class="ti ti-arrow-right" aria-hidden="true"></i></button>
+  </div>
+  <div class="arow" id="ar" style="display:none">
+    <button class="bk" onclick="markK()"><i class="ti ti-check" aria-hidden="true"></i> Hafal</button>
+    <button class="bs" onclick="next()">Lewati</button>
+  </div>
+</div>
+
+<div id="lMode" style="display:none;overflow-x:auto">
+  <table class="ltbl">
+    <thead><tr><th>Kanji</th><th>Romaji</th><th>Arti</th><th>Level</th></tr></thead>
+    <tbody id="lb"></tbody>
+  </table>
+</div>
+</div>
+
+<script>
+const hira2rom={あ:"a",い:"i",う:"u",え:"e",お:"o",か:"ka",き:"ki",く:"ku",け:"ke",こ:"ko",さ:"sa",し:"shi",す:"su",せ:"se",そ:"so",た:"ta",ち:"chi",つ:"tsu",て:"te",と:"to",な:"na",に:"ni",ぬ:"nu",ね:"ne",の:"no",は:"ha",ひ:"hi",ふ:"fu",へ:"he",ほ:"ho",ま:"ma",み:"mi",む:"mu",め:"me",も:"mo",や:"ya",ゆ:"yu",よ:"yo",ら:"ra",り:"ri",る:"ru",れ:"re",ろ:"ro",わ:"wa",を:"wo",ん:"n",が:"ga",ぎ:"gi",ぐ:"gu",げ:"ge",ご:"go",ざ:"za",じ:"ji",ず:"zu",ぜ:"ze",ぞ:"zo",だ:"da",ぢ:"ji",づ:"zu",で:"de",ど:"do",ば:"ba",び:"bi",ぶ:"bu",べ:"be",ぼ:"bo",ぱ:"pa",ぴ:"pi",ぷ:"pu",ぺ:"pe",ぽ:"po",きゃ:"kya",きゅ:"kyu",きょ:"kyo",しゃ:"sha",しゅ:"shu",しょ:"sho",ちゃ:"cha",ちゅ:"chu",ちょ:"cho",にゃ:"nya",にゅ:"nyu",にょ:"nyo",ひゃ:"hya",ひゅ:"hyu",ひょ:"hyo",みゃ:"mya",みゅ:"myu",みょ:"myo",りゃ:"rya",りゅ:"ryu",りょ:"ryo",ぎゃ:"gya",ぎゅ:"gyu",ぎょ:"gyo",じゃ:"ja",じゅ:"ju",じょ:"jo",びゃ:"bya",びゅ:"byu",びょ:"byo",ぴゃ:"pya",ぴゅ:"pyu",ぴょ:"pyo",っ:"(t)"};
+
+function toRom(h){
+  if(!h)return"";
+  let r="",i=0;
+  while(i<h.length){
+    if(i+1<h.length&&hira2rom[h[i]+h[i+1]]){r+=hira2rom[h[i]+h[i+1]];i+=2;}
+    else if(hira2rom[h[i]]){r+=hira2rom[h[i]];i++;}
+    else{r+=h[i];i++;}
+  }
+  return r;
+}
+
+const V=[
+["私","わたし","saya","pron","N5"],["あなた","あなた","kamu","pron","N5"],["彼","かれ","dia (laki)","pron","N5"],["彼女","かのじょ","dia (perempuan)","pron","N5"],["人","ひと","orang","n","N5"],["男","おとこ","laki-laki","n","N5"],["女","おんな","perempuan","n","N5"],["子供","こども","anak","n","N5"],["父","ちち","ayah","n","N5"],["母","はは","ibu","n","N5"],
+["兄","あに","kakak laki","n","N5"],["姉","あね","kakak perempuan","n","N5"],["弟","おとうと","adik laki","n","N5"],["妹","いもうと","adik perempuan","n","N5"],["友達","ともだち","teman","n","N5"],["先生","せんせい","guru","n","N5"],["学生","がくせい","pelajar","n","N5"],["会社員","かいしゃいん","karyawan","n","N5"],["医者","いしゃ","dokter","n","N5"],["店員","てんいん","pelayan toko","n","N5"],
+["学校","がっこう","sekolah","n","N5"],["会社","かいしゃ","perusahaan","n","N5"],["家","いえ","rumah","n","N5"],["駅","えき","stasiun","n","N5"],["病院","びょういん","rumah sakit","n","N5"],["銀行","ぎんこう","bank","n","N5"],["郵便局","ゆうびんきょく","kantor pos","n","N5"],["図書館","としょかん","perpustakaan","n","N5"],["レストラン","れすとらん","restoran","n","N5"],["スーパー","すーぱー","supermarket","n","N5"],
+["一","いち","satu","num","N5"],["二","に","dua","num","N5"],["三","さん","tiga","num","N5"],["四","し/よん","empat","num","N5"],["五","ご","lima","num","N5"],["六","ろく","enam","num","N5"],["七","しち/なな","tujuh","num","N5"],["八","はち","delapan","num","N5"],["九","く/きゅう","sembilan","num","N5"],["十","じゅう","sepuluh","num","N5"],
+["百","ひゃく","seratus","num","N5"],["千","せん","seribu","num","N5"],["万","まん","sepuluh ribu","num","N5"],["何","なに","apa","q","N5"],["いくつ","いくつ","berapa banyak","q","N5"],["いくら","いくら","berapa harga","q","N5"],["どこ","どこ","di mana","q","N5"],["だれ","だれ","siapa","q","N5"],["いつ","いつ","kapan","q","N5"],["どれ","どれ","yang mana","q","N5"],
+["食べる","たべる","makan","v","N5"],["飲む","のむ","minum","v","N5"],["見る","みる","melihat","v","N5"],["聞く","きく","mendengar/bertanya","v","N5"],["話す","はなす","berbicara","v","N5"],["読む","よむ","membaca","v","N5"],["書く","かく","menulis","v","N5"],["行く","いく","pergi","v","N5"],["来る","くる","datang","v","N5"],["帰る","かえる","pulang","v","N5"],
+["起きる","おきる","bangun tidur","v","N5"],["寝る","ねる","tidur","v","N5"],["買う","かう","membeli","v","N5"],["売る","うる","menjual","v","N5"],["使う","つかう","menggunakan","v","N5"],["作る","つくる","membuat","v","N5"],["開ける","あける","membuka","v","N5"],["閉める","しめる","menutup","v","N5"],["入る","はいる","masuk","v","N5"],["出る","でる","keluar","v","N5"],
+["立つ","たつ","berdiri","v","N5"],["座る","すわる","duduk","v","N5"],["走る","はしる","berlari","v","N5"],["歩く","あるく","berjalan","v","N5"],["泳ぐ","およぐ","berenang","v","N5"],["遊ぶ","あそぶ","bermain","v","N5"],["働く","はたらく","bekerja","v","N5"],["休む","やすむ","istirahat","v","N5"],["待つ","まつ","menunggu","v","N5"],["会う","あう","bertemu","v","N5"],
+["始まる","はじまる","mulai","v","N5"],["終わる","おわる","selesai","v","N5"],["わかる","わかる","mengerti","v","N5"],["ある","ある","ada (benda)","v","N5"],["いる","いる","ada (makhluk)","v","N5"],["いい","いい","baik","adj","N5"],["大きい","おおきい","besar","adj","N5"],["小さい","ちいさい","kecil","adj","N5"],["高い","たかい","tinggi/mahal","adj","N5"],["低い","ひくい","rendah","adj","N5"],
+["長い","ながい","panjang","adj","N5"],["短い","みじかい","pendek","adj","N5"],["新しい","あたらしい","baru","adj","N5"],["古い","ふるい","lama/tua","adj","N5"],["多い","おおい","banyak","adj","N5"],["少ない","すくない","sedikit","adj","N5"],["暑い","あつい","panas (cuaca)","adj","N5"],["寒い","さむい","dingin (cuaca)","adj","N5"],["熱い","あつい","panas (benda)","adj","N5"],["冷たい","つめたい","dingin (benda)","adj","N5"],
+["今","いま","sekarang","n","N5"],["今日","きょう","hari ini","n","N5"],["明日","あした","besok","n","N5"],["昨日","きのう","kemarin","n","N5"],["今週","こんしゅう","minggu ini","n","N5"],["来週","らいしゅう","minggu depan","n","N5"],["先週","せんしゅう","minggu lalu","n","N5"],["今月","こんげつ","bulan ini","n","N5"],["来月","らいげつ","bulan depan","n","N5"],["去年","きょねん","tahun lalu","n","N5"],
+["朝","あさ","pagi","n","N5"],["昼","ひる","siang","n","N5"],["夜","よる","malam","n","N5"],["午前","ごぜん","pagi (AM)","n","N5"],["午後","ごご","sore (PM)","n","N5"],["時間","じかん","waktu/jam","n","N5"],["分","ふん","menit","n","N5"],["春","はる","musim semi","n","N5"],["夏","なつ","musim panas","n","N5"],["秋","あき","musim gugur","n","N5"],
+["冬","ふゆ","musim dingin","n","N5"],["天気","てんき","cuaca","n","N5"],["雨","あめ","hujan","n","N5"],["雪","ゆき","salju","n","N5"],["風","かぜ","angin","n","N5"],["食べ物","たべもの","makanan","n","N5"],["飲み物","のみもの","minuman","n","N5"],["ご飯","ごはん","nasi/makan","n","N5"],["パン","ぱん","roti","n","N5"],["肉","にく","daging","n","N5"],
+["魚","さかな","ikan","n","N5"],["野菜","やさい","sayuran","n","N5"],["果物","くだもの","buah","n","N5"],["水","みず","air","n","N5"],["お茶","おちゃ","teh","n","N5"],["コーヒー","こーひー","kopi","n","N5"],["服","ふく","pakaian","n","N5"],["靴","くつ","sepatu","n","N5"],["本","ほん","buku","n","N5"],["電話","でんわ","telepon","n","N5"],
+["車","くるま","mobil","n","N5"],["電車","でんしゃ","kereta","n","N5"],["バス","ばす","bus","n","N5"],["自転車","じてんしゃ","sepeda","n","N5"],["飛行機","ひこうき","pesawat","n","N5"],["お金","おかね","uang","n","N5"],["部屋","へや","kamar","n","N5"],["机","つくえ","meja","n","N5"],["椅子","いす","kursi","n","N5"],["ドア","どあ","pintu","n","N5"],
+["窓","まど","jendela","n","N5"],["テレビ","てれび","televisi","n","N5"],["新聞","しんぶん","koran","n","N5"],["写真","しゃしん","foto","n","N5"],["地図","ちず","peta","n","N5"],["白","しろ","putih","adj","N5"],["黒","くろ","hitam","adj","N5"],["赤","あか","merah","adj","N5"],["青","あお","biru","adj","N5"],["黄色","きいろ","kuning","adj","N5"],
+["右","みぎ","kanan","n","N5"],["左","ひだり","kiri","n","N5"],["前","まえ","depan","n","N5"],["後ろ","うしろ","belakang","n","N5"],["上","うえ","atas","n","N5"],["下","した","bawah","n","N5"],["中","なか","dalam","n","N5"],["外","そと","luar","n","N5"],["近い","ちかい","dekat","adj","N5"],["遠い","とおい","jauh","adj","N5"],
+["速い","はやい","cepat","adj","N5"],["遅い","おそい","lambat","adj","N5"],["難しい","むずかしい","sulit","adj","N5"],["易しい","やさしい","mudah","adj","N5"],["楽しい","たのしい","menyenangkan","adj","N5"],["面白い","おもしろい","menarik","adj","N5"],["つまらない","つまらない","membosankan","adj","N5"],["好き","すき","suka","adj-na","N5"],["嫌い","きらい","tidak suka","adj-na","N5"],["上手","じょうず","pandai","adj-na","N5"],
+["下手","へた","tidak pandai","adj-na","N5"],["有名","ゆうめい","terkenal","adj-na","N5"],["元気","げんき","sehat/bersemangat","adj-na","N5"],["大丈夫","だいじょうぶ","tidak apa-apa","adj-na","N5"],["きれい","きれい","cantik/bersih","adj-na","N5"],["静か","しずか","tenang","adj-na","N5"],["にぎやか","にぎやか","ramai","adj-na","N5"],["暇","ひま","waktu luang","adj-na","N5"],["大切","たいせつ","penting","adj-na","N5"],["親切","しんせつ","ramah","adj-na","N5"],
+["ちょっと","ちょっと","sebentar/sedikit","adv","N5"],["とても","とても","sangat","adv","N5"],["もっと","もっと","lebih lagi","adv","N5"],["また","また","lagi/lain kali","adv","N5"],["もう","もう","sudah/lagi","adv","N5"],["まだ","まだ","masih/belum","adv","N5"],["だから","だから","karena itu","conj","N5"],["でも","でも","tapi","conj","N5"],["そして","そして","dan kemudian","conj","N5"],["それから","それから","setelah itu","conj","N5"],
+["受ける","うける","menerima/ikut ujian","v","N4"],["覚える","おぼえる","menghafal","v","N4"],["忘れる","わすれる","melupakan","v","N4"],["調べる","しらべる","menyelidiki","v","N4"],["教える","おしえる","mengajar","v","N4"],["習う","ならう","belajar (dari guru)","v","N4"],["練習する","れんしゅうする","berlatih","v","N4"],["準備する","じゅんびする","mempersiapkan","v","N4"],["説明する","せつめいする","menjelaskan","v","N4"],["相談する","そうだんする","berkonsultasi","v","N4"],
+["連絡する","れんらくする","menghubungi","v","N4"],["確認する","かくにんする","mengkonfirmasi","v","N4"],["約束する","やくそくする","berjanji","v","N4"],["予約する","よやくする","reservasi","v","N4"],["利用する","りようする","memanfaatkan","v","N4"],["送る","おくる","mengirim","v","N4"],["受け取る","うけとる","menerima barang","v","N4"],["届く","とどく","sampai/tiba","v","N4"],["渡す","わたす","menyerahkan","v","N4"],["貸す","かす","meminjamkan","v","N4"],
+["借りる","かりる","meminjam","v","N4"],["払う","はらう","membayar","v","N4"],["集める","あつめる","mengumpulkan","v","N4"],["捨てる","すてる","membuang","v","N4"],["片付ける","かたづける","merapikan","v","N4"],["洗う","あらう","mencuci","v","N4"],["切る","きる","memotong","v","N4"],["押す","おす","mendorong/menekan","v","N4"],["引く","ひく","menarik","v","N4"],["動く","うごく","bergerak","v","N4"],
+["止まる","とまる","berhenti","v","N4"],["続ける","つづける","melanjutkan","v","N4"],["始める","はじめる","memulai","v","N4"],["変える","かえる","mengubah","v","N4"],["決める","きめる","memutuskan","v","N4"],["考える","かんがえる","memikirkan","v","N4"],["信じる","しんじる","mempercayai","v","N4"],["感じる","かんじる","merasakan","v","N4"],["心配する","しんぱいする","mengkhawatirkan","v","N4"],["喜ぶ","よろこぶ","bergembira","v","N4"],
+["怒る","おこる","marah","v","N4"],["泣く","なく","menangis","v","N4"],["笑う","わらう","tertawa","v","N4"],["驚く","おどろく","terkejut","v","N4"],["困る","こまる","kesulitan","v","N4"],["疲れる","つかれる","lelah","v","N4"],["急ぐ","いそぐ","terburu-buru","v","N4"],["間に合う","まにあう","tepat waktu","v","N4"],["落ち着く","おちつく","tenang","v","N4"],["曲がる","まがる","berbelok","v","N4"],
+["仕事","しごと","pekerjaan","n","N4"],["職場","しょくば","tempat kerja","n","N4"],["部署","ぶしょ","departemen","n","N4"],["上司","じょうし","atasan","n","N4"],["部下","ぶか","bawahan","n","N4"],["同僚","どうりょう","rekan kerja","n","N4"],["社長","しゃちょう","direktur utama","n","N4"],["課長","かちょう","kepala bagian","n","N4"],["会議","かいぎ","rapat","n","N4"],["報告","ほうこく","laporan","n","N4"],
+["書類","しょるい","dokumen","n","N4"],["資料","しりょう","materi/data","n","N4"],["契約","けいやく","kontrak","n","N4"],["締め切り","しめきり","batas waktu","n","N4"],["残業","ざんぎょう","lembur","n","N4"],["給料","きゅうりょう","gaji","n","N4"],["休暇","きゅうか","cuti","n","N4"],["出張","しゅっちょう","perjalanan dinas","n","N4"],["面接","めんせつ","wawancara","n","N4"],["採用","さいよう","penerimaan kerja","n","N4"],
+["応募","おうぼ","melamar kerja","n","N4"],["経験","けいけん","pengalaman","n","N4"],["技術","ぎじゅつ","teknologi/keahlian","n","N4"],["研修","けんしゅう","pelatihan","n","N4"],["担当","たんとう","penanggung jawab","n","N4"],["連絡先","れんらくさき","kontak","n","N4"],["住所","じゅうしょ","alamat","n","N4"],["番号","ばんごう","nomor","n","N4"],["登録","とうろく","registrasi","n","N4"],["申し込み","もうしこみ","pendaftaran","n","N4"],
+["記入する","きにゅうする","mengisi formulir","v","N4"],["提出する","ていしゅつする","menyerahkan dokumen","v","N4"],["入社する","にゅうしゃする","masuk perusahaan","v","N4"],["退社する","たいしゃする","keluar perusahaan","v","N4"],["転職する","てんしょくする","pindah kerja","v","N4"],["失敗","しっぱい","kegagalan","n","N4"],["成功","せいこう","keberhasilan","n","N4"],["目標","もくひょう","tujuan","n","N4"],["計画","けいかく","rencana","n","N4"],["結果","けっか","hasil","n","N4"],
+["問題","もんだい","masalah/soal","n","N4"],["解決","かいけつ","penyelesaian","n","N4"],["方法","ほうほう","cara/metode","n","N4"],["理由","りゆう","alasan","n","N4"],["ミス","みす","kesalahan","n","N4"],["経済","けいざい","ekonomi","n","N4"],["社会","しゃかい","masyarakat","n","N4"],["文化","ぶんか","budaya","n","N4"],["習慣","しゅうかん","kebiasaan","n","N4"],["規則","きそく","peraturan","n","N4"],
+["路線","ろせん","jalur kereta","n","N4"],["乗り換え","のりかえ","ganti kereta","n","N4"],["終電","しゅうでん","kereta terakhir","n","N4"],["定期券","ていきけん","kartu langganan","n","N4"],["改札口","かいさつぐち","pintu masuk stasiun","n","N4"],["ホーム","ほーむ","peron","n","N4"],["発車","はっしゃ","keberangkatan","n","N4"],["到着","とうちゃく","kedatangan","n","N4"],["遅延","ちえん","keterlambatan","n","N4"],["交差点","こうさてん","persimpangan","n","N4"],
+["信号","しんごう","lampu lalu lintas","n","N4"],["橋","はし","jembatan","n","N4"],["階段","かいだん","tangga","n","N4"],["エレベーター","えれべーたー","lift","n","N4"],["出口","でぐち","pintu keluar","n","N4"],["入口","いりぐち","pintu masuk","n","N4"],["近所","きんじょ","lingkungan sekitar","n","N4"],["引っ越す","ひっこす","pindah rumah","v","N4"],["建物","たてもの","gedung","n","N4"],["修理する","しゅうりする","memperbaiki","v","N4"],
+["掃除する","そうじする","membersihkan","v","N4"],["洗濯する","せんたくする","mencuci pakaian","v","N4"],["料理する","りょうりする","memasak","v","N4"],["病気","びょうき","sakit/penyakit","n","N4"],["症状","しょうじょう","gejala","n","N4"],["薬","くすり","obat","n","N4"],["手術","しゅじゅつ","operasi","n","N4"],["入院","にゅういん","rawat inap","n","N4"],["退院","たいいん","keluar dari RS","n","N4"],["健康","けんこう","kesehatan","n","N4"],
+["保険","ほけん","asuransi","n","N4"],["診察","しんさつ","pemeriksaan medis","n","N4"],["値段","ねだん","harga","n","N4"],["割引","わりびき","diskon","n","N4"],["支払い","しはらい","pembayaran","n","N4"],["現金","げんきん","uang tunai","n","N4"],["おつり","おつり","kembalian","n","N4"],["税金","ぜいきん","pajak","n","N4"],["注文する","ちゅうもんする","memesan","v","N4"],["外食","がいしょく","makan di luar","n","N4"],
+["環境","かんきょう","lingkungan hidup","n","N4"],["地震","じしん","gempa bumi","n","N4"],["台風","たいふう","topan","n","N4"],["洪水","こうずい","banjir","n","N4"],["避難","ひなん","evakuasi","n","N4"],["安全","あんぜん","aman","adj-na","N4"],["危険","きけん","berbahaya","adj-na","N4"],["注意","ちゅうい","hati-hati","n","N4"],["緊急","きんきゅう","darurat","adj-na","N4"],["救急車","きゅうきゅうしゃ","ambulans","n","N4"],
+["警察","けいさつ","polisi","n","N4"],["消防署","しょうぼうしょ","pemadam kebakaran","n","N4"],["大使館","たいしかん","kedutaan","n","N4"],["役所","やくしょ","kantor pemerintah","n","N4"],["手続き","てつづき","prosedur","n","N4"],["趣味","しゅみ","hobi","n","N4"],["旅行","りょこう","perjalanan wisata","n","N4"],["観光","かんこう","wisata","n","N4"],["土産","みやげ","oleh-oleh","n","N4"],["予定","よてい","rencana/jadwal","n","N4"],
+["招待","しょうたい","undangan","n","N4"],["お祝い","おいわい","perayaan","n","N4"],["プレゼント","ぷれぜんと","hadiah","n","N4"],["結婚式","けっこんしき","upacara pernikahan","n","N4"],["祭り","まつり","festival","n","N4"],["便利","べんり","praktis","adj-na","N4"],["不便","ふべん","tidak praktis","adj-na","N4"],["丁寧","ていねい","sopan/teliti","adj-na","N4"],["真剣","しんけん","serius","adj-na","N4"],["正直","しょうじき","jujur","adj-na","N4"],
+["複雑","ふくざつ","rumit","adj-na","N4"],["自由","じゆう","bebas/kebebasan","adj-na","N4"],["特別","とくべつ","istimewa","adj-na","N4"],["普通","ふつう","biasa/normal","adj-na","N4"],["必要","ひつよう","perlu","adj-na","N4"],["十分","じゅうぶん","cukup","adj-na","N4"],["残念","ざんねん","sayang/menyesal","adj-na","N4"],["大変","たいへん","berat/luar biasa","adj-na","N4"],["もし","もし","jika/kalau","conj","N4"],["たとえば","たとえば","misalnya","adv","N4"],
+["つまり","つまり","dengan kata lain","adv","N4"],["しかし","しかし","namun","conj","N4"],["ところで","ところで","ngomong-ngomong","conj","N4"],["それに","それに","selain itu","conj","N4"],["したがって","したがって","oleh karena itu","conj","N4"],["特に","とくに","khususnya","adv","N4"],["主に","おもに","terutama","adv","N4"],["だいたい","だいたい","kira-kira","adv","N4"],["ぜひ","ぜひ","tolong/sudilah","adv","N4"],["やっと","やっと","akhirnya","adv","N4"],
+["急に","きゅうに","tiba-tiba","adv","N4"],["絶対","ぜったい","pasti/mutlak","adv","N4"],["たぶん","たぶん","mungkin","adv","N4"],["きっと","きっと","pasti (yakin)","adv","N4"],["ちゃんと","ちゃんと","dengan benar","adv","N4"],["自分","じぶん","diri sendiri","pron","N4"],["お互い","おたがい","satu sama lain","pron","N4"],["何か","なにか","sesuatu","pron","N4"],["気をつける","きをつける","berhati-hati","exp","N4"],["お世話になる","おせわになる","terima kasih atas bantuan","exp","N4"],
+["よろしくお願いします","よろしくおねがいします","mohon bantuannya","exp","N4"],["失礼します","しつれいします","permisi","exp","N4"],["お疲れ様","おつかれさま","terima kasih atas kerja keras","exp","N4"],["いただきます","いただきます","sebelum makan","exp","N4"],["ごちそうさま","ごちそうさま","setelah makan","exp","N4"],["〜てしまう","〜てしまう","terlanjur/selesai","gram","N4"],["〜ておく","〜ておく","melakukan sebelumnya","gram","N4"],["〜てみる","〜てみる","mencoba melakukan","gram","N4"],["〜てもいい","〜てもいい","boleh melakukan","gram","N4"],["〜なければならない","〜なければならない","harus melakukan","gram","N4"],
+["〜ようにする","〜ようにする","berusaha agar","gram","N4"],["〜ようになる","〜ようになる","menjadi bisa","gram","N4"],["〜かもしれない","〜かもしれない","mungkin saja","gram","N4"],["〜はずだ","〜はずだ","seharusnya","gram","N4"],["〜について","〜について","tentang ~","gram","N4"],["〜として","〜として","sebagai ~","gram","N4"],["〜のために","〜のために","demi/untuk ~","gram","N4"],["授業","じゅぎょう","pelajaran/kelas","n","N4"],["宿題","しゅくだい","pekerjaan rumah","n","N4"],["試験","しけん","ujian","n","N4"],
+["合格","ごうかく","lulus","n","N4"],["不合格","ふごうかく","tidak lulus","n","N4"],["点数","てんすう","nilai","n","N4"],["成績","せいせき","nilai akademik","n","N4"],["卒業","そつぎょう","wisuda/lulus","n","N4"],["入学","にゅうがく","masuk sekolah","n","N4"],["進学","しんがく","melanjutkan studi","n","N4"],["辞書","じしょ","kamus","n","N4"],["教科書","きょうかしょ","buku pelajaran","n","N4"],["ノート","のーと","buku catatan","n","N4"],
+["パソコン","ぱそこん","komputer","n","N4"],["スマートフォン","すまーとふぉん","smartphone","n","N4"],["インターネット","いんたーねっと","internet","n","N4"],["メール","めーる","email","n","N4"],["アプリ","あぷり","aplikasi","n","N4"],["パスワード","ぱすわーど","kata sandi","n","N4"],["画面","がめん","layar","n","N4"],["申請する","しんせいする","mengajukan permohonan","v","N4"],["参加する","さんかする","berpartisipasi","v","N4"],["協力する","きょうりょくする","bekerja sama","v","N4"],
+["完成する","かんせいする","menyelesaikan","v","N4"],["紹介する","しょうかいする","memperkenalkan","v","N4"],["比べる","くらべる","membandingkan","v","N4"],["選ぶ","えらぶ","memilih","v","N4"],["増える","ふえる","bertambah","v","N4"],["減る","へる","berkurang","v","N4"],["直す","なおす","memperbaiki","v","N4"],["壊れる","こわれる","rusak","v","N4"],["育てる","そだてる","membesarkan","v","N4"],["生まれる","うまれる","lahir","v","N4"]
+];
+
+const PD=50,TD=20;
+let day=1,idx=0,flipped=false,known={},mode='f';
+
+function dv(d){return V.slice((d-1)*PD,d*PD);}
+
+function rDays(){
+  const el=document.getElementById('dg');
+  el.innerHTML='';
+  for(let d=1;d<=TD;d++){
+    const v=dv(d),k=v.filter((_,i)=>known[(d-1)*PD+i]).length;
+    const b=document.createElement('button');
+    b.className='db'+(d===day?' cur':'')+(k===PD?' done':'');
+    b.textContent='H'+d;
+    b.onclick=(d=>{return()=>selDay(d);})(d);
+    el.appendChild(b);
+  }
+}
+
+function selDay(d){day=d;idx=0;flipped=false;rDays();rCard();uStats();if(mode==='l')rList();}
+
+function uStats(){
+  const v=dv(day),k=v.filter((_,i)=>known[(day-1)*PD+i]).length;
+  document.getElementById('sT').textContent=PD;
+  document.getElementById('sK').textContent=k;
+  document.getElementById('sL').textContent=PD-k;
+  document.getElementById('pf').style.width=Math.round(k/PD*100)+'%';
+}
+
+function rCard(){
+  const w=dv(day)[idx];
+  const rom=toRom(w[1]);
+  document.getElementById('cJ').textContent=w[0];
+  document.getElementById('cR').textContent=w[1]!==w[0]?w[1]:'';
+  document.getElementById('cRom').textContent=(rom&&rom!==w[1])?rom:'';
+  document.getElementById('cH').textContent=flipped?'':'ketuk untuk lihat arti';
+  document.getElementById('cM').style.display=flipped?'block':'none';
+  document.getElementById('cM').textContent=w[2];
+  document.getElementById('cTp').textContent=flipped?(w[3]+' · '+w[4]):'';
+  document.getElementById('ct').textContent=(idx+1)+' / '+PD;
+  document.getElementById('ar').style.display=flipped?'flex':'none';
+  document.getElementById('cd').style.opacity=known[(day-1)*PD+idx]?'0.5':'1';
+}
+
+function flip(){flipped=!flipped;rCard();}
+function next(){if(idx<PD-1){idx++;flipped=false;rCard();}}
+function prev(){if(idx>0){idx--;flipped=false;rCard();}}
+function markK(){known[(day-1)*PD+idx]=true;uStats();rDays();next();}
+
+function setM(m){
+  mode=m;
+  document.getElementById('mf').className='mbtn'+(m==='f'?' on':'');
+  document.getElementById('ml').className='mbtn'+(m==='l'?' on':'');
+  document.getElementById('fMode').style.display=m==='f'?'block':'none';
+  document.getElementById('lMode').style.display=m==='l'?'block':'none';
+  if(m==='l')rList();
+}
+
+function rList(){
+  const v=dv(day),tb=document.getElementById('lb');
+  tb.innerHTML='';
+  v.forEach((w,i)=>{
+    const gi=(day-1)*PD+i,tr=document.createElement('tr');
+    if(known[gi])tr.className='kn';
+    const rom=toRom(w[1]);
+    tr.innerHTML=`<td><span class="jp-cell">${w[0]}</span><span class="rom-tag">${w[1]}</span></td><td style="color:var(--color-text-secondary);font-size:12px">${rom}</td><td>${w[2]}</td><td><span class="badge b${w[4].toLowerCase()}">${w[4]}</span></td>`;
+    tr.onclick=()=>{known[gi]=!known[gi];uStats();rList();rDays();};
+    tb.appendChild(tr);
+  });
+}
+
+rDays();rCard();uStats();
+</script>
